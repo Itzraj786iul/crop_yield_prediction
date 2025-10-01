@@ -5,7 +5,6 @@ import numpy as np
 from datetime import datetime
 import os
 
-# Initialize Flask app
 app = Flask(__name__)
 
 # Load all components
@@ -109,6 +108,5 @@ def get_crops():
     return jsonify({'crops': crops}), 200
 
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
