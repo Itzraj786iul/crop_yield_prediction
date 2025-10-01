@@ -4,21 +4,33 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import os
+import sys
+from download_models import download_models
 
+# Initialize Flask app
 app = Flask(__name__)
 
+# Download models if they don't exist
+model_dir = 'model'
+if not os.path.exists(model_dir) or not os.listdir(model_dir):
+    print("Models not found. Downloading...")
+    if not download_models():
+        print("Failed to download models. Exiting.")
+        sys.exit(1)
+    print("Models downloaded successfully.")
+
 # Load all components
-model_path = os.path.join(os.path.dirname(__file__), 'model')
-model = joblib.load(os.path.join(model_path, 'crop_yield_model.pkl'))
-base_scaler = joblib.load(os.path.join(model_path, 'base_scaler.pkl'))
-interaction_scaler = joblib.load(os.path.join(model_path, 'interaction_scaler.pkl'))
-label_encoders = joblib.load(os.path.join(model_path, 'label_encoders.pkl'))
-crop_to_category = joblib.load(os.path.join(model_path, 'crop_to_category.pkl'))
-feature_cols = joblib.load(os.path.join(model_path, 'feature_cols.pkl'))
+model = joblib.load(os.path.join(model_dir, 'crop_yield_model.pkl'))
+base_scaler = joblib.load(os.path.join(model_dir, 'base_scaler.pkl'))
+interaction_scaler = joblib.load(os.path.join(model_dir, 'interaction_scaler.pkl'))
+label_encoders = joblib.load(os.path.join(model_dir, 'label_encoders.pkl'))
+crop_to_category = joblib.load(os.path.join(model_dir, 'crop_to_category.pkl'))
+feature_cols = joblib.load(os.path.join(model_dir, 'feature_cols.pkl'))
 
 # Define numerical columns that need scaling
 numerical_cols = ['Year', 'year_since_start', 'decade', 'AREA', 
                   'district_mean_yield', 'state_mean_yield', 'prev_year_yield', 'yield_deviation']
+
 
 @app.route('/')
 def home():
